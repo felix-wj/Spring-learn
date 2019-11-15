@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * @program: spring-learn
@@ -14,6 +15,8 @@ import java.io.IOException;
  * @create: 2019-11-14 17:19
  **/
 public class DispatcherServlet extends HttpServlet {
+    private final String LOCATION = "contextConfigLocation";
+    private List<HandlerMapping> handlerMappings = new ArrayList<>();
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         System.out.println("get the request");
