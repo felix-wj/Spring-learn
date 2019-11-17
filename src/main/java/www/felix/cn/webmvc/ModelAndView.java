@@ -8,21 +8,20 @@ import java.util.Map;
  * @program: spring-learn
  * @description:
  * @author: WangJie
- * @create: 2019-11-15 17:08
+ * @create: 2019-11-17 12:26
  **/
 @Data
-public class ModeAndView {
-
+public class ModelAndView {
     private String viewName;
+    private Map<String,Object> model;
 
-    private Map<String,?> model;
-
-    public ModeAndView(String viewName) {
+    public ModelAndView(String viewName) {
         this.viewName = viewName;
     }
 
-    public ModeAndView(String viewName, Map<String, ?> model) {
+    public ModelAndView(String viewName, Map<String, Object> model) {
         this.viewName = viewName;
         this.model = model;
     }
 }
+

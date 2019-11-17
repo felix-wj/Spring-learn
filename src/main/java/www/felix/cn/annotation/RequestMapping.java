@@ -9,7 +9,8 @@ import java.lang.annotation.*;
  * @create: 2019-11-15 11:25
  **/
 @Documented
-@Target({ElementType.METHOD})
+@Target({ElementType.METHOD,ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface RequestMapping {
+    String value();
 }

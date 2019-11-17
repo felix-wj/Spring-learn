@@ -13,6 +13,9 @@ public class BeanWrapper {
     private Object wrappedInstance;
     private Class<?> wrappedClass;
 
+    public BeanWrapper() {
+    }
+
     public BeanWrapper(Object wrappedInstance) {
         this.wrappedInstance = wrappedInstance;
     }

@@ -1,5 +1,6 @@
 package www.felix.cn.context;
 
+import lombok.extern.slf4j.Slf4j;
 import www.felix.cn.annotation.Autowired;
 import www.felix.cn.annotation.Controller;
 import www.felix.cn.annotation.Service;
@@ -22,12 +23,16 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author: WangJie
  * @create: 2019-11-15 11:46
  **/
+@Slf4j
 public class ApplicationContext  extends DefaultListableBeanFactory implements BeanFactory {
 
     private String[] configLocations;
     private BeanDefinitionReader reader;
     private Map<String,Object> factoryBeanObjectCache = new ConcurrentHashMap<>();
     private Map<String, BeanWrapper> factoryBeanInstanceCache = new ConcurrentHashMap<>();
+
+    public ApplicationContext() {
+    }
 
     public ApplicationContext(String... configLocations) {
         this.configLocations = configLocations;
@@ -119,20 +124,18 @@ public class ApplicationContext  extends DefaultListableBeanFactory implements B
     private Object instantiateBean(BeanDefinition beanDefinition) {
         Object instance = null;
         String className = beanDefinition.getBeanClassName();
+        Class<?> clazz = null;
         try {
             if(this.factoryBeanObjectCache.containsKey(className)){
                 instance = this.factoryBeanObjectCache.get(className);
             }else {
-                Class<?> clazz = Class.forName(className);
+                clazz = Class.forName(className);
                 instance = clazz.newInstance();
                 this.factoryBeanObjectCache.put(beanDefinition.getFactoryBeanName(),instance);
             }
             return instance;
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
+        } catch (Exception e){
+            System.out.println("---className:"+clazz.getName());
             e.printStackTrace();
         }
         return null;
