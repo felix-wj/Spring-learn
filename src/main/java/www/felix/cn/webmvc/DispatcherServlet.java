@@ -14,7 +14,6 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.*;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -54,11 +53,11 @@ public class DispatcherServlet extends HttpServlet {
         HandlerMapping handler = getHandler(req);
         if (handler==null){
             processDispatchResult(req,resp,new ModelAndView("404"));
-            HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
-            ModelAndView modelAndView = handlerAdapter.handler(req,resp,handler);
-            processDispatchResult(req,resp,modelAndView);
-
+            return;
         }
+        HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
+        ModelAndView modelAndView = handlerAdapter.handler(req,resp,handler);
+        processDispatchResult(req,resp,modelAndView);
     }
 
     private HandlerAdapter getHandlerAdapter(HandlerMapping handler) {
@@ -120,13 +119,14 @@ public class DispatcherServlet extends HttpServlet {
         initHandlerAdapters(context);
         initHandlerExceptionResolvers(context);
         initRequestToViewNameTranslator(context);
-        initViewResolvers(context);
+        //initViewResolvers(context);
         initFlashMapManager(context);
 
     }
 
     private void initViewResolvers(ApplicationContext context) {
         String templateRoot = context.getConfig().getProperty("templateRoot");
+
         String templateRootPath = this.getClass().getClassLoader().getResource(templateRoot).getFile();
         File templateDir = new File(templateRootPath);
         for (File file : templateDir.listFiles()) {

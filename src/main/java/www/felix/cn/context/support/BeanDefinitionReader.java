@@ -1,5 +1,7 @@
 package www.felix.cn.context.support;
 
+import www.felix.cn.annotation.Controller;
+import www.felix.cn.annotation.Service;
 import www.felix.cn.beans.BeanDefinition;
 
 import java.io.File;
@@ -56,10 +58,12 @@ public class BeanDefinitionReader {
                 if (beanClass.isInterface()){
                     continue;
                 }
-                beanDefinitions.add(doCreateBeanDefintion(toLowerFirstCase(beanClass.getSimpleName()),beanClass.getName()));
-                Class<?>[] interfaces = beanClass.getInterfaces();
-                for (Class<?> anInterface : interfaces) {
-                    beanDefinitions.add(doCreateBeanDefintion(anInterface.getName(),beanClass.getName()));
+                if (beanClass.isAnnotationPresent(Controller.class)||beanClass.isAnnotationPresent(Service.class)) {
+                    beanDefinitions.add(doCreateBeanDefintion(toLowerFirstCase(beanClass.getSimpleName()), beanClass.getName()));
+                    Class<?>[] interfaces = beanClass.getInterfaces();
+                    for (Class<?> anInterface : interfaces) {
+                        beanDefinitions.add(doCreateBeanDefintion(anInterface.getName(), beanClass.getName()));
+                    }
                 }
             }
         } catch (ClassNotFoundException e) {

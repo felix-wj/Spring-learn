@@ -1,5 +1,6 @@
 package www.felix.cn.demo;
 
+import www.felix.cn.annotation.Autowired;
 import www.felix.cn.annotation.Controller;
 import www.felix.cn.annotation.RequestMapping;
 import www.felix.cn.annotation.RequestParam;
@@ -17,6 +18,8 @@ import java.io.IOException;
 @RequestMapping("/demo")
 public class DemoController {
 
+    @Autowired
+    private DemoService demoService;
     @RequestMapping("/print")
     public void print(@RequestParam("name") String name, HttpServletResponse response) throws IOException {
         response.getWriter().write("name:"+name);

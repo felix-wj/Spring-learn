@@ -49,6 +49,7 @@ public class ApplicationContext  extends DefaultListableBeanFactory implements B
         List<BeanDefinition> beanDefinitions = reader.loadBeanDefinitions();
         doRegisterBeanDefintion(beanDefinitions);
         doAutowired();
+        System.out.println();
     }
 
     private void doAutowired() {
@@ -99,7 +100,7 @@ public class ApplicationContext  extends DefaultListableBeanFactory implements B
 
     private void populateBean(String beanName, Object instance) {
         Class clazz = instance.getClass();
-        if (!clazz.isAnnotationPresent(Controller.class)||clazz.isAnnotationPresent(Service.class)){
+        if (!(clazz.isAnnotationPresent(Controller.class)||clazz.isAnnotationPresent(Service.class))){
             return;
         }
         Field[] fields = clazz.getDeclaredFields();
@@ -110,15 +111,26 @@ public class ApplicationContext  extends DefaultListableBeanFactory implements B
             Autowired autowired = field.getAnnotation(Autowired.class);
             String autowiredBeanName = autowired.value().trim();
             if ("".equals(autowiredBeanName)){
-                autowiredBeanName = field.getType().getName();
+                autowiredBeanName = toLowerFirstCase(field.getType().getSimpleName());
             }
             field.setAccessible(true);
             try {
+                Object wrappedInstance = this.factoryBeanInstanceCache.get(autowiredBeanName).getWrappedInstance();
+                if (wrappedInstance==null){
+                    getBean(toLowerFirstCase(autowiredBeanName));
+                }
                 field.set(instance,this.factoryBeanInstanceCache.get(autowiredBeanName).getWrappedInstance());
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
+    }
+    private String toLowerFirstCase(String name) {
+        char[] chars = name.toCharArray();
+        chars[0]+=32;
+        return String.valueOf(chars);
     }
 
     private Object instantiateBean(BeanDefinition beanDefinition) {
