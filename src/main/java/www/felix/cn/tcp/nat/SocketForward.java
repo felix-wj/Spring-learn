@@ -3,11 +3,9 @@ package www.felix.cn.tcp.nat;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.SocketException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @program: spring-learn
@@ -18,28 +16,28 @@ import java.net.SocketException;
 @Slf4j
 public class SocketForward {
 
-    private Socket server;
-    private Socket client;
+    private Socket serverProxy;
+    private Socket clientProxy;
     private static final int SIZE=1024*1024;
-    public SocketForward(Socket server,String ip,Integer port) {
-        this.server = server;
+    public SocketForward(Socket serverProxy, String ip, Integer port) {
+        this.serverProxy = serverProxy;
 
-        client = new Socket();
-        client = new Socket();
+        clientProxy = new Socket();
+        clientProxy = new Socket();
         // 设置reuseAddress为true
         try {
-            client.setReuseAddress(true);
-            client.connect(new InetSocketAddress(ip, port));
+            clientProxy.setReuseAddress(true);
+            clientProxy.connect(new InetSocketAddress(ip, port));
         } catch (Exception e) {
             throw new RuntimeException("创建socket失败");
         }
     }
 
-    public void run() throws IOException {
-        ReadAndWriteThread realClientSend = new ReadAndWriteThread(server.getInputStream(),client.getOutputStream());
+    public void run() throws IOException, InterruptedException {
+        ReadAndWriteThread realClientSend = new ReadAndWriteThread("客户端发送：",serverProxy.getInputStream(), clientProxy.getOutputStream());
         realClientSend.start();
-
-        ReadAndWriteThread realServerSend = new ReadAndWriteThread(client.getInputStream(),server.getOutputStream());
+        TimeUnit.SECONDS.sleep(1);
+        ReadAndWriteThread realServerSend = new ReadAndWriteThread("服务端发送：",clientProxy.getInputStream(), serverProxy.getOutputStream());
         realServerSend.start();
     }
 }

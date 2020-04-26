@@ -16,7 +16,7 @@ import java.net.Socket;
 public class ConnectDemo {
     private static final String ip = "118.25.87.131";
     private static final int port = 3306;
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
         // 1.创建一个服务器端Socket，即ServerSocket，指定绑定的端口，并监听此端口
         ServerSocket serverSocket = new ServerSocket(12345);
         Socket socket = null;
